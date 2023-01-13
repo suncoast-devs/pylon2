@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 /** @type {import('tailwindcss').Config} */
 const config = {
   content: [
@@ -6,7 +8,11 @@ const config = {
   ],
   darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Inria Sans', ...defaultTheme.fontFamily.sans],
+      },
+    },
   },
   plugins: [
     require('@tailwindcss/forms'),
