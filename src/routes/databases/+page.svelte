@@ -1,26 +1,26 @@
 <script lang="ts">
   import { Table, tableMapperValues, modalStore } from '@skeletonlabs/skeleton'
   import type { ModalComponent, ModalSettings, TableSource } from '@skeletonlabs/skeleton'
+  import type { ActionData, PageData } from './$types'
+  import { enhance } from '$app/forms'
   import Detail from './Detail.svelte'
-  import Form from './Form.svelte'
 
-  const sourceData = [
-    { id: 1, name: 'Hydrogen', age: '2 days', size: '2 MB' },
-    { id: 2, name: 'Helium', age: '4 weeks', size: '0.5 KB' },
-    { id: 3, name: 'Lithium', age: '9 days', size: '24 MB' },
-    { id: 4, name: 'Beryllium', age: '30 seconds', size: '224 KB' },
-    { id: 5, name: 'Boron', age: '1 year', size: '0B' },
-  ]
+  export let form: ActionData
+
+  export let data: PageData
+
+  const { databases } = data
 
   const tableSimple: TableSource = {
     head: ['Name', 'Age', 'Size'],
-    body: tableMapperValues(sourceData, ['name', 'age', 'size']),
-    meta: tableMapperValues(sourceData, ['id', 'name']),
+    body: tableMapperValues(databases, ['name', 'age', 'size']),
+    meta: tableMapperValues(databases, ['id', 'name']),
   }
 
-  function handleRowSelect(event: CustomEvent) {
+  function showDetailModal(event: CustomEvent) {
     const modalComponent: ModalComponent = {
       ref: Detail,
+      slot: '',
     }
     const d: ModalSettings = {
       type: 'component',
@@ -29,25 +29,25 @@
     }
     modalStore.trigger(d)
   }
-
-  function handleNewDBClick() {
-    const modalComponent: ModalComponent = {
-      ref: Form,
-    }
-    const d: ModalSettings = {
-      type: 'component',
-      component: modalComponent,
-    }
-    modalStore.trigger(d)
-  }
 </script>
 
-<div class="flex justify-between align-middle">
-  <h1>PostgreSQL Databases</h1>
-  <button class="btn btn-base btn-filled-primary" on:click={handleNewDBClick}>
-    <i class="fa-duotone fa-database" />
-    <span>New DB</span>
-  </button>
-</div>
+<h1>PostgreSQL Databases</h1>
 
-<Table source={tableSimple} interactive={true} on:selected={handleRowSelect} />
+<div class="grid gap-4 md:grid-cols-3">
+  <div class="md:col-span-2">
+    <Table source={tableSimple} interactive={true} on:selected={showDetailModal} />
+  </div>
+
+  <div class="card card-glass-surface space-y-2 p-4">
+    <h1 class="text-gradient">Create a New Database</h1>
+    <form method="POST" use:enhance class="space-y-4">
+      <label for="name">
+        <span>Name</span>
+        <input type="text" id="name" name="name" minlength="2" required />
+      </label>
+      <footer class="flex justify-end space-x-4">
+        <button class="btn btn-filled-primary" type="submit">Create DB</button>
+      </footer>
+    </form>
+  </div>
+</div>

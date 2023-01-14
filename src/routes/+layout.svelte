@@ -2,10 +2,10 @@
   import '@skeletonlabs/skeleton/styles/all.css'
   import '../theme.postcss'
   import '../app.postcss'
-  import { AppShell, AppBar, AppRail, AppRailTile, Modal } from '@skeletonlabs/skeleton'
-  import icon from '$lib/assets/icon.svg'
 
+  import { AppShell, AppBar, AppRail, AppRailTile, Modal } from '@skeletonlabs/skeleton'
   import { writable, type Writable } from 'svelte/store'
+  import icon from '$lib/assets/icon.svg'
 
   const storeValue: Writable<number> = writable(1)
 </script>
