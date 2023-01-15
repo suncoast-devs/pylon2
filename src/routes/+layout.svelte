@@ -3,11 +3,12 @@
   import '../theme.postcss'
   import '../app.postcss'
 
-  import { AppShell, AppBar, AppRail, AppRailTile, Modal } from '@skeletonlabs/skeleton'
+  import { AppShell, AppBar, AppRail, AppRailTile, Modal, Toast } from '@skeletonlabs/skeleton'
+  import Icon from '$lib/components/Icon.svelte'
   import { writable, type Writable } from 'svelte/store'
   import icon from '$lib/assets/icon.svg'
 
-  const storeValue: Writable<number> = writable(1)
+  const storeValue: Writable<number> = writable(3)
 </script>
 
 <AppShell>
@@ -29,8 +30,14 @@
   </svelte:fragment>
   <svelte:fragment slot="sidebarLeft">
     <AppRail selected={storeValue}>
-      <AppRailTile tag="a" href="/databases" value={1}>
-        <i class="fa-duotone fa-database fa-lg" />
+      <AppRailTile tag="a" href="/projects" label="Projects" value={1}>
+        <Icon xl icon="code" />
+      </AppRailTile>
+      <AppRailTile tag="a" href="/lessons" label="Lessons" value={2}>
+        <Icon xl icon="school" />
+      </AppRailTile>
+      <AppRailTile tag="a" href="/databases" label="Databases" value={3}>
+        <Icon xl icon="database" />
       </AppRailTile>
     </AppRail>
   </svelte:fragment>
@@ -47,3 +54,4 @@
   </svelte:fragment>
 </AppShell>
 <Modal />
+<Toast buttonDismiss="btm-sm" padding="py-2 pl-4" />

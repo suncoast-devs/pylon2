@@ -1,19 +1,15 @@
-import { error, json } from '@sveltejs/kit'
-import type { RequestHandler } from './$types'
+import { json, fail } from '@sveltejs/kit'
+import db from '$lib/database'
+import type { RequestEvent } from './$types'
 
-export const GET = (({ params }) => {
-  return json({
-    id: params.id,
-    name: 'Hydrogen',
-    user: '2sfsad',
-    port: 5432,
-    password: 'd4nsim3d',
-    hostname: 'db.suncoast.app',
-    database: 'hydrogen',
-  })
-}) satisfies RequestHandler
+export const GET = async ({ params }: RequestEvent) => {
+  const database = await db.database.findUnique({ where: { id: params.id } })
+  if (!database) return fail(404)
+  return json(database)
+}
 
-export const DELETE = (({ params }) => {
-  console.log(`TODO: Delete the database with ${params.id}`)
+export const DELETE = async ({ params }: RequestEvent) => {
+  const database = await db.database.delete({ where: { id: params.id } })
+  if (!database) return fail(404)
   return new Response('Deleted', { status: 200 })
-}) satisfies RequestHandler
+}

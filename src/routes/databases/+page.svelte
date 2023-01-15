@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { Table, tableMapperValues, modalStore } from '@skeletonlabs/skeleton'
-  import type { ModalComponent, ModalSettings, TableSource } from '@skeletonlabs/skeleton'
+  import { toastStore, modalStore } from '@skeletonlabs/skeleton'
+  import type { ModalComponent, ModalSettings, ToastSettings } from '@skeletonlabs/skeleton'
+  import { TR, TD } from '$lib/components/tables'
+  import { formatDate } from '$lib/utilities'
   import type { ActionData, PageData } from './$types'
   import { enhance } from '$app/forms'
   import Detail from './Detail.svelte'
@@ -9,13 +11,7 @@
 
   export let data: PageData
 
-  const { databases } = data
-
-  const tableSimple: TableSource = {
-    head: ['Name', 'Age', 'Size'],
-    body: tableMapperValues(databases, ['name', 'age', 'size']),
-    meta: tableMapperValues(databases, ['id', 'name']),
-  }
+  $: databases = data.databases
 
   function showDetailModal(event: CustomEvent) {
     const modalComponent: ModalComponent = {
@@ -29,13 +25,42 @@
     }
     modalStore.trigger(d)
   }
+
+  $: {
+    if (form?.success) {
+      const t: ToastSettings = {
+        message: 'Database created successfully.',
+        preset: 'success',
+        autohide: true,
+        timeout: 5000,
+      }
+      toastStore.trigger(t)
+    }
+  }
 </script>
 
 <h1>PostgreSQL Databases</h1>
 
 <div class="grid gap-4 md:grid-cols-3">
   <div class="md:col-span-2">
-    <Table source={tableSimple} interactive={true} on:selected={showDetailModal} />
+    <div class="table-container">
+      <table class="table-interactive table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each databases as db, i}
+            <TR on:selected={showDetailModal} meta={db.id} index={i}>
+              <TD index={0}>{db.name}</TD>
+              <TD index={1}>{formatDate(db.createdAt)}</TD>
+            </TR>
+          {/each}
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div class="card card-glass-surface space-y-2 p-4">
