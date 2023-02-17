@@ -1,11 +1,21 @@
 <script lang="ts">
   import { enhance } from '$app/forms'
-  import { TR, TD } from '$lib/components/tables'
+  import { TR } from '$lib/components/tables'
   import type { PageData } from './$types'
 
   export let data: PageData
 
   $: people = data.people
+
+  function invitePerson(personId: string) {
+    fetch(`/admin/people/${personId}/invite`, {
+      method: 'POST',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+      })
+  }
 </script>
 
 <h1>People</h1>
@@ -16,15 +26,22 @@
       <table class="table-interactive table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Created</th>
+            <th colspan="2">Name</th>
+            <th>Email</th>
+            <th />
           </tr>
         </thead>
         <tbody>
           {#each people as person, i}
             <TR meta={person.id} index={i}>
-              <TD index={0}>{person.name}</TD>
-              <TD index={1}>{person.email}</TD>
+              <td>{person.givenName}</td>
+              <td>{person.familyName}</td>
+              <td>{person.email}</td>
+              <td>
+                {#if !person.userRef}
+                  <button class="btn btn-sm btn-ghost-primary" on:click={() => invitePerson(person.id)}>Invite</button>
+                {/if}
+              </td>
             </TR>
           {/each}
         </tbody>
@@ -35,10 +52,16 @@
   <div class="card card-glass-surface space-y-2 p-4">
     <h1 class="text-gradient">Add a New Person</h1>
     <form method="POST" use:enhance class="space-y-4">
-      <label for="name">
-        <span>Name</span>
-        <input type="text" id="name" name="name" required />
-      </label>
+      <div class="columns-2">
+        <label for="givenName">
+          <span>First Name</span>
+          <input type="text" id="givenName" name="givenName" required />
+        </label>
+        <label for="familyName">
+          <span>Last Name</span>
+          <input type="text" id="familyName" name="familyName" required />
+        </label>
+      </div>
       <label for="email">
         <span>Email Address</span>
         <input type="text" id="email" name="email" required />

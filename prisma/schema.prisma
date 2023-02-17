@@ -18,11 +18,12 @@ model Database {
 }
 
 model Person {
-  id        String     @id @default(dbgenerated("nanoid()"))
-  createdAt DateTime   @default(now())
-  name      String
-  email     String     @unique
-  userRef   String?    @unique
-  activated Boolean    @default(false)
-  databases Database[]
+  id         String     @id @default(dbgenerated("nanoid()"))
+  createdAt  DateTime   @default(now())
+  givenName  String
+  familyName String
+  email      String     @unique
+  userRef    String?    @unique
+  activated  Boolean    @default(false)
+  databases  Database[]
 }

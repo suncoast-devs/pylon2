@@ -6,8 +6,10 @@ export const load = (async () => {
   const people = await db.person.findMany({
     select: {
       id: true,
-      name: true,
+      givenName: true,
+      familyName: true,
       email: true,
+      userRef: true,
     },
   })
   return { people }
@@ -16,9 +18,10 @@ export const load = (async () => {
 export const actions: Actions = {
   default: async ({ request }) => {
     const data = await request.formData()
-    const name = data.get('name') as string
+    const givenName = data.get('givenName') as string
+    const familyName = data.get('familyName') as string
     const email = data.get('email') as string
-    const person = await db.person.create({ data: { name, email } })
+    const person = await db.person.create({ data: { givenName, familyName, email } })
     return { success: true, person }
   },
 }
